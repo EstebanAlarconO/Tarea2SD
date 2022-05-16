@@ -1,14 +1,24 @@
-version: "3"
+version: "3.9"
+
+networks:
+  my_network:
+
 services:
   zookeeper:
     image: 'bitnami/zookeeper:latest'
+    container_name: zookeeper
+    networks:
+      - my_network
     ports:
       - '2181:2181'
     environment:
       - ALLOW_ANONYMOUS_LOGIN=yes
+
   kafka:
-  
     image: 'bitnami/kafka:latest'
+    container_name: kafka
+    networks:
+      - my_network
     ports:
       - '9092:9092'
     environment:
@@ -17,14 +27,42 @@ services:
       - KAFKA_CFG_ADVERTISED_LISTENERS=PLAINTEXT://127.0.0.1:9092
       - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper:2181
       - ALLOW_PLAINTEXT_LISTENER=yes
+
+    entrypoint: [ '/bin/sh', '-c' ]
+    command: |
+      "
+      # blocks until kafka is reachable
+      kafka-topics --bootstrap-server kafka:9092 --list
+
+      echo -e 'Creating kafka topics'
+      kafka-topics --create --bootstrap-server kafka:9092  --if-not-exists --replication-factor 1 --partitions 1 --topic solicitud
+
+      echo -e 'Successfully created the following topics:'
+      kafka-topics --bootstrap-server kafka:9092 --list
+      "
+    
     depends_on:
       - zookeeper
 
-  client:
-
-    build: ./Cliente
+  producer:
+    container_name: producer
+    networks:
+      - my_network
+    build: ./Producer
     ports:
-      - "8000:5000"
+      - "8000:8000"
     depends_on:
       - kafka
       - zookeeper
+  
+  consumer:
+    container_name: consumer
+    networks:
+      - my_network
+    build: ./Consumer
+    ports:
+      - "5000:5000"
+    depends_on:
+      - kafka
+      - zookeeper
+      - producer
