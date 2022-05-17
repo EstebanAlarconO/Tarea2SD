@@ -9,13 +9,20 @@ topic_list = []
 
 @app.route('/')
 def index():
-    return render_template('index.html')
-
-@app.route('/login', methods = ['POST'])
-def login():
     producer = KafkaProducer(bootstrap_servers=['kafka:9092'],
                          value_serializer=lambda x: 
                          json.dumps(x).encode('utf-8'))
+    producer.send('test', b'Hello, World!')
+    producer.send('test', key=b'message-two', value=b'This is Kafka-Python')
+    return render_template('index.html')
+    
+'''
+@app.route('/login', methods = ['POST'])
+def login():
+    
+
     return
+'''
+
 
     

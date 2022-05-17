@@ -9,6 +9,9 @@ topic_list = []
 
 @app.route('/')
 def index():
+    consumer = KafkaConsumer('test')
+    for message in consumer:
+        print (message)
     return render_template('index.html')
 
 
