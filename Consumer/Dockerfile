@@ -5,5 +5,6 @@ RUN pip install kafka-python
 ENV FLASK_APP=api_consumer.py
 ENV FLASK_RUN_HOST=0.0.0.0
 
+EXPOSE 5000
 COPY . .
 CMD ["flask", "run"]
