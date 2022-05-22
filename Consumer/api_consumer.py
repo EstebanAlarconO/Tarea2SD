@@ -14,7 +14,7 @@ def is_blocked(msg):
     if msg['user'] not in usuarios:
         usuarios[msg['user']] = [msg['time_login'], 5, 0]
     else:
-        if (usuarios[msg['user']][0] - msg['time_login'] == 1) and (usuarios[msg['user']][1]-1 == 0):
+        if (usuarios[msg['user']][0] - msg['time_login'] <= 1) and (usuarios[msg['user']][1]-1 == 0):
             usuarios[msg['user']] = [msg['time_login'],0,1]
         else:
             usuarios[msg['user']] = [usuarios[msg['user']][0],usuarios[msg['user']][1]-1,0]
