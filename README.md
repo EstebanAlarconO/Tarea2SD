@@ -7,8 +7,8 @@ kafka-topics.sh --create --bootstrap-server kafka:9092 --replication-factor 1 --
 <h3 align="Center">Preguntas</h3>
 
 <p> ¿Por qué Kafka funciona bien en este escenario? </p>
-Kafka trabaja con flujos de datos, es por ello que gracias a su manera asincrónica de trabajar evita que se generen aglomeraciones de estos flujos antes mencionados, que en el caso de la tarea realizada solventa perfectamente los problemas que pueden traer los login.\
-
+Kafka trabaja con flujos de datos, es por ello que gracias a su manera asincrónica de trabajar evita que se generen aglomeraciones de estos flujos antes mencionados, que en el caso de la tarea realizada solventa perfectamente los problemas que pueden traer los login.
+<br>
 
 
 <p> Basado en las tecnologías que usted tiene a su disposición (Kafka, backend) ¿Qué haría usted para manejar
