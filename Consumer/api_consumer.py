@@ -40,7 +40,7 @@ async def consume():
         async for msg in consumer:
             print("consumed: ", msg.topic, msg.partition, msg.offset,
                   msg.key, msg.value, msg.timestamp)
-            is_blocked(son.loads(msg.value))
+            is_blocked(json.loads(msg.value))
     finally:
         # Will leave consumer group; perform autocommit if enabled.
         await consumer.stop()
