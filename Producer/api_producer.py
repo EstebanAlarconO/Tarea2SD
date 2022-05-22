@@ -1,6 +1,6 @@
 import json
 from time import sleep, ctime, time
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect
 from kafka import KafkaProducer
 from aiokafka import AIOKafkaProducer
 import asyncio
@@ -20,7 +20,7 @@ async def send_one(message):
     finally:
         # Wait for all pending messages to be delivered or expire.
         await producer.stop()
-#producer = KafkaProducer()
+
 @app.route('/')
 def index():
         return render_template('index.html')
@@ -32,10 +32,7 @@ def login():
         message={'user': user, 'time_login': time()}
         message = json.dumps(message).encode('utf-8')
         asyncio.run(send_one(message))
-        '''producer = KafkaProducer(bootstrap_servers=['kafka:9092'], value_serializer=lambda x: json.dumps(x).encode('UTF-8'))
-        producer.send('test', {'user':user, 'hora_login': localtime()})'''
-        #producer.send('test', key=b'message-two', value=b'This is Kafka-Python')
-    return render_template('index.html')
+    return redirect('http://localhost:5000/')
     
 
 if __name__== "__main__":
