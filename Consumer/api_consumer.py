@@ -1,7 +1,5 @@
-from time import time
 import json
-from flask import Flask, render_template, request
-from kafka import KafkaConsumer
+from flask import Flask, render_template, redirect
 from aiokafka import AIOKafkaConsumer
 import asyncio
 
@@ -25,7 +23,6 @@ def is_blocked(msg):
                 usuarios[msg['user']] = [usuarios[msg['user']][0],usuarios[msg['user']][1]-1,0]
             else:
                 usuarios[msg['user']] = [msg['time_login'], 5, 0]
-                    
     return
 
 def get_blocked(usuario):
@@ -41,29 +38,21 @@ async def consume():
         bootstrap_servers='kafka:9092')
     await consumer.start()
     try:
-        # Consume messages
         async for msg in consumer:
-            print("consumed: ", msg.topic, msg.partition, msg.offset,
-                  msg.key, msg.value, msg.timestamp)
             is_blocked(json.loads(msg.value))
             return json.loads(msg.value)
     finally:
-        # Will leave consumer group; perform autocommit if enabled.
         await consumer.stop()
 
 @app.route('/')
 def index():
-    message = asyncio.run(consume())
-    return render_template('index.html')
+    return redirect('blocked')
 
 @app.route('/blocked')
 def blocked():
+    asyncio.run(consume())
     users_blocked = view_blocked()
-    #message=asyncio.run(consume())
-    '''consumer = KafkaConsumer('test', bootstrap_servers=['kafka:9092'], consumer_timeout_ms=300000, enable_auto_commit=True)
-    for message in consumer:  
-        message = message.value  '''
-    return render_template('blocked.html', valor=time(), values= users_blocked, usuarios = usuarios)
+    return render_template('blocked.html', values= users_blocked)
     
 if __name__== "__main__":
     app.run(debug = True)
